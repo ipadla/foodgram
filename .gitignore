@@ -130,3 +130,10 @@ dmypy.json
 
 # .idea
 .idea
+
+# SublimeText
+*.sublime-project
+*.sublime-workspace
+
+# Pyrightconfig
+pyrightconfig.json
