@@ -8,6 +8,9 @@ class User(AbstractUser):
         ('U', 'User'),
     )
 
+    first_name = models.CharField('first name', max_length=150, blank=False, null=False)
+    last_name = models.CharField('last name', max_length=150, blank=False, null=False)
+    email = models.EmailField('email address', max_length=254, blank=False, null=False)
     role = models.CharField(
         max_length=1,
         choices=USER_ROLES,
