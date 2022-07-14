@@ -26,3 +26,26 @@ class User(AbstractUser):
                 name='unique_email_username'
             )
         ]
+        ordering = ('-date_joined',)
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Последователь',
+        help_text='Пользователь который подписывается'
+    )
+
+    author = models.ForeignKey(
+        User,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Автор',
+        help_text='Пользователь на которого подписываются'
+    )

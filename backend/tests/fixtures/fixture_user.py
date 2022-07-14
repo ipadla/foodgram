@@ -30,6 +30,15 @@ def user(django_user_model):
         role='U'
     )
 
+@pytest.fixture
+def user2(django_user_model):
+    return django_user_model.objects.create_user(
+        username='TestUser2',
+        email='user2@mail.fake',
+        password='1234567',
+        role='U'
+    )
+
 
 @pytest.fixture
 def token_superuser(superuser):
@@ -76,6 +85,22 @@ def client_user(token_user):
 
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION=f'Token {token_user}')
+    return client
+
+
+@pytest.fixture
+def token_user2(user2):
+    from rest_framework.authtoken.models import Token
+    token, _ = Token.objects.get_or_create(user=user2)
+    return token.key
+
+
+@pytest.fixture
+def client_user2(token_user2):
+    from rest_framework.test import APIClient
+
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION=f'Token {token_user2}')
     return client
 
 
