@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from users.models import Follow
+from users.permissions import IsNotAuthenticated
 from users.serializers import (UserPasswordSerializer, UserSerializer,
                                UserSignupSerializer)
 
@@ -19,19 +20,11 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-    def get_object(self):
-        uid = self.kwargs.get('id', None)
-
-        if uid == 'me':
-            uid = self.request.user.id
-
-        return get_object_or_404(User, id=uid)
-
     def get_permissions(self):
         permissions = self.permission_classes
 
-        if self.action in ['create', 'list']:
-            permissions = [AllowAny]
+        if self.action in ['create']:
+            permissions = [IsNotAuthenticated]
             return [permission() for permission in permissions]
 
         return super().get_permissions()
@@ -42,7 +35,13 @@ class UsersViewSet(viewsets.ModelViewSet):
 
         return super().get_serializer_class()
 
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        instance = self.request.user
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
     def set_password(self, request):
         serializer = UserPasswordSerializer(
             data=request.data,
@@ -54,3 +53,32 @@ class UsersViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['delete', 'post']) # TODO: Move subscription to other app?
+    def subscribe(self, request, id=None):
+        author = self.get_object()
+        if request.user == author:
+            return Response(
+                data={'errors': 'You can\'t do this with yourself'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        subscription = Follow.objects.filter(author=author, user=request.user)
+        if request.method == 'DELETE':
+            if subscription.exists():
+                subscription.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            return Response(
+                data={'detail': 'Страница не найдена.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if request.method == 'POST':
+            if subscription.exists():
+                return Response(
+                    data={'errors': 'This subscription already exists'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            Follow.objects.create(author=author, user=request.user)
+            return Response(status=status.HTTP_201_CREATED)
