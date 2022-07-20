@@ -58,7 +58,7 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.role == User.ADMIN:
             self.is_staff = True
-        else:
+        elif self.is_superuser is False and self.role != User.ADMIN:
             self.is_staff = False
 
         super().save(*args, **kwargs)
@@ -66,13 +66,14 @@ class User(AbstractUser):
 
 @receiver(models.signals.post_save, sender=User)
 def check_user_in_administrators_group(sender, instance, using, **kwargs):
-    group = Group.objects.get(name='Administrators')
+    if Group.objects.filter(name='Administrators').exists() is True:
+        group = Group.objects.get(name='Administrators')
 
-    if instance.role == User.ADMIN and group not in instance.groups.all():
-        group.user_set.add(instance)
+        if instance.role == User.ADMIN and group not in instance.groups.all():
+            group.user_set.add(instance)
 
-    if instance.role != User.ADMIN and group in instance.groups.all():
-        group.user_set.remove(instance)
+        if instance.role != User.ADMIN and group in instance.groups.all():
+            group.user_set.remove(instance)
 
 
 class Subscription(models.Model):

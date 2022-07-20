@@ -2,8 +2,8 @@ import pytest
 from rest_framework.test import APIClient
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersAuth:
-    @pytest.mark.django_db()
     def test_user_login(self, client, password_1, user1):
         url = '/api/auth/token/login/'
 
@@ -42,7 +42,6 @@ class TestUsersAuth:
         assert 'id' in response.json()
         assert response.json()['id'] == user1.id
 
-    @pytest.mark.django_db()
     def test_user_logout(self, client, client_user1):
         url = '/api/auth/token/logout/'
 

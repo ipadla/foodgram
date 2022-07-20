@@ -3,8 +3,8 @@ import pytest
 from users.models import Subscription
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersSubscriptionModel:
-    @pytest.mark.django_db
     def test_users_follow_model_fields(self):
         expected_fields = ['author', 'user']
 
@@ -12,8 +12,8 @@ class TestUsersSubscriptionModel:
             assert field == Subscription._meta.get_field(field).name
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersSubscription:
-    @pytest.mark.django_db()
     def test_unauthorized_subscription(self, client, user1):
         url = f'/api/users/{user1.id}/subscribe/'
 
@@ -21,7 +21,6 @@ class TestUsersSubscription:
         assert client.post(url).status_code == 401
         assert client.delete(url).status_code == 401
 
-    @pytest.mark.django_db(transaction=True)
     def test_authorized_subscription(self, client_user1, client_user2, user1, user2):
         url = f'/api/users/{user1.id}/subscribe/'
 

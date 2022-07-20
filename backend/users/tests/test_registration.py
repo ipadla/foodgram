@@ -3,8 +3,8 @@ import pytest
 from tests.common import User
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersAuth:
-    @pytest.mark.django_db(transaction=True)
     def test_user_registration_and_login(self, client, client_user1, password_1, password_weak, user1):
         url = '/api/users/'
         login_url = '/api/auth/token/login/'

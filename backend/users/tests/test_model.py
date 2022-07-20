@@ -15,7 +15,7 @@ class TestUsersModel:
     @pytest.mark.django_db
     def test_users_model_fields(self):
         expected_fields = {
-            'role': fields.CharField,
+            'role': fields.PositiveSmallIntegerField,
             'email': fields.EmailField,
             'username': fields.CharField,
             'first_name': fields.CharField,
