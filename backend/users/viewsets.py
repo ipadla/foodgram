@@ -5,7 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import Follow
+from users.models import Subscription
 from users.permissions import IsNotAuthenticated
 from users.serializers import (UserPasswordSerializer, UserSerializer,
                                UserSignupSerializer)
@@ -63,7 +63,10 @@ class UsersViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        subscription = Follow.objects.filter(author=author, user=request.user)
+        subscription = Subscription.objects.filter(
+            author=author,
+            user=request.user
+        )
         if request.method == 'DELETE':
             if subscription.exists():
                 subscription.delete()
@@ -80,7 +83,7 @@ class UsersViewSet(viewsets.ModelViewSet):
                     data={'errors': 'Подписка уже существует'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            Follow.objects.create(author=author, user=request.user)
+            Subscription.objects.create(author=author, user=request.user)
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)

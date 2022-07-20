@@ -2,13 +2,31 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from users.models import Subscription
+
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'first_name', 'last_name')
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed'
+        )
         read_only_fields = ('__all__',)
+
+    def get_is_subscribed(self, obj):
+        return Subscription.objects.filter(
+            user=self.context['request'].user,
+            author=obj
+        ).exists()
 
 
 class UserPasswordSerializer(serializers.Serializer):
@@ -38,11 +56,31 @@ class UserPasswordSerializer(serializers.Serializer):
 
 class UserSignupSerializer(serializers.ModelSerializer):
 
-    email = serializers.EmailField(max_length=256, required=True)
-    first_name = serializers.CharField(max_length=150, required=True)
-    last_name = serializers.CharField(max_length=150, required=True)
-    username = serializers.CharField(max_length=150, required=True)
-    password = serializers.CharField(max_length=150, required=True, write_only=True)
+    email = serializers.EmailField(
+        max_length=256,
+        required=True
+    )
+
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+
+    username = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+
+    password = serializers.CharField(
+        max_length=150,
+        required=True,
+        write_only=True
+    )
 
     class Meta:
         model = User

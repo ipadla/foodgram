@@ -1,6 +1,6 @@
 import pytest
 
-from users.models import Follow
+from users.models import Subscription
 
 
 class TestUsersSubscriptionModel:
@@ -9,7 +9,7 @@ class TestUsersSubscriptionModel:
         expected_fields = ['author', 'user']
 
         for field in expected_fields:
-            assert field == Follow._meta.get_field(field).name
+            assert field == Subscription._meta.get_field(field).name
 
 
 class TestUsersSubscription:
@@ -22,7 +22,7 @@ class TestUsersSubscription:
         assert client.delete(url).status_code == 401
 
     @pytest.mark.django_db(transaction=True)
-    def test_authorized_subscription(self, client_user1, client_user2, user1):
+    def test_authorized_subscription(self, client_user1, client_user2, user1, user2):
         url = f'/api/users/{user1.id}/subscribe/'
 
         response = client_user1.post(url)
@@ -30,9 +30,16 @@ class TestUsersSubscription:
             f'{response.json()}'
         )
 
-        follow_objects = Follow.objects.all().count()
+        assert Subscription.objects.filter(user=user2, author=user1).exists() is False
         assert client_user2.post(url).status_code == 201
-        assert Follow.objects.all().count() == follow_objects + 1
+        assert Subscription.objects.filter(user=user2, author=user1).exists() is True
+        assert user2.subscriber.all().count() == 1
+        assert user1.subscribed.all().count() == 1
+
+        response = client_user2.get(f'/api/users/{user1.id}/')
+        assert response.status_code == 200
+        assert 'is_subscribed' in response.json()
+        assert response.json()['is_subscribed'] is True
 
         response = client_user2.post(url)
         assert response.status_code == 400, (
@@ -40,7 +47,14 @@ class TestUsersSubscription:
         )
 
         assert client_user2.delete(url).status_code == 204
-        assert Follow.objects.all().count() == follow_objects
+        assert Subscription.objects.filter(user=user2, author=user1).exists() is False
+        assert user2.subscriber.all().count() == 0
+        assert user1.subscribed.all().count() == 0
+
+        response = client_user2.get(f'/api/users/{user1.id}/')
+        assert response.status_code == 200
+        assert 'is_subscribed' in response.json()
+        assert response.json()['is_subscribed'] is False
 
         response = client_user2.delete(url)
         assert response.status_code == 404, (

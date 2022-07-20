@@ -48,13 +48,13 @@ class User(AbstractUser):
         ordering = ('-date_joined',)
 
 
-class Follow(models.Model):
+class Subscription(models.Model):
     user = models.ForeignKey(
         User,
         blank=False,
         null=False,
         on_delete=models.CASCADE,
-        related_name='follower',
+        related_name='subscriber',
         verbose_name='Последователь',
         help_text='Пользователь который подписывается'
     )
@@ -64,7 +64,7 @@ class Follow(models.Model):
         blank=False,
         null=False,
         on_delete=models.CASCADE,
-        related_name='following',
+        related_name='subscribed',
         verbose_name='Автор',
         help_text='Пользователь на которого подписываются'
     )
