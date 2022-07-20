@@ -108,12 +108,3 @@ REST_FRAMEWORK = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
 }
-
-if os.getenv('PYTEST', default=False):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'memory:',
-        }
-    }
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
