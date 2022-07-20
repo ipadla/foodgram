@@ -44,7 +44,7 @@ class UserAdmin(auth.admin.UserAdmin):
     )
 
     def get_fieldsets(self, request, obj=None):
-        if request.user.is_superuser:
+        if request.user.is_superuser and obj is not None:
             return UserAdmin.fieldsets + (
                 ('Advanced options', {'fields': ('role', )}),
             )
@@ -57,7 +57,8 @@ class UserAdmin(auth.admin.UserAdmin):
                         'username',
                         'first_name',
                         'last_name',
-                        'password'
+                        'password',
+                        'is_active'
                     )
                 }),
                 ('Advanced options', {
