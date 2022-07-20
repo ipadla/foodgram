@@ -1,7 +1,7 @@
-from django.contrib.auth import get_user_model
+import pytest
 from django.db.models import fields
 
-User = get_user_model()
+from tests.common import User
 
 
 def search_field(fields, attname):
@@ -12,6 +12,7 @@ def search_field(fields, attname):
 
 
 class TestUsersModel:
+    @pytest.mark.django_db
     def test_users_model_fields(self):
         expected_fields = {
             'role': fields.CharField,

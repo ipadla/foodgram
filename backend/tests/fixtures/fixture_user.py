@@ -1,111 +1,82 @@
 import pytest
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
+
+
+from tests.common import User
+
+@pytest.fixture(scope='session')
+def password_1():
+    return 'gv9zPWhb5Xr2pHq3'
+
+
+@pytest.fixture(scope='session')
+def password_2():
+    return 'gv9zPWhb5Xr2pHq3'
+
+
+@pytest.fixture(scope='session')
+def password_weak():
+    return '12345'
 
 
 @pytest.fixture
-def superuser(django_user_model):
-    return django_user_model.objects.create_superuser(
-        username='TestSuperuser',
-        email='superuser@mail.fake',
-        password='1234567',
-        role='U'
-    )
-
-
-@pytest.fixture
-def admin(django_user_model):
+def admin(django_user_model, password_1):
     return django_user_model.objects.create_user(
         username='TestAdmin',
         email='admin@mail.fake',
-        password='1234567',
-        role='A'
+        password=password_1,
+        first_name='Admin',
+        last_name='User',
+        role='A',
+        is_staff=True
     )
 
 
 @pytest.fixture
-def user(django_user_model):
+def user1(django_user_model, password_1):
     return django_user_model.objects.create_user(
-        username='TestUser',
-        email='user@mail.fake',
-        password='1234567',
-        role='U'
+        username='TestUser1',
+        email='user1@mail.fake',
+        password=password_1,
+        first_name='Common',
+        last_name='User'
     )
 
+
 @pytest.fixture
-def user2(django_user_model):
+def user2(django_user_model, password_1):
     return django_user_model.objects.create_user(
         username='TestUser2',
         email='user2@mail.fake',
-        password='1234567',
-        role='U'
+        password=password_1,
+        first_name='Common',
+        last_name='User'
     )
 
 
 @pytest.fixture
-def token_superuser(superuser):
-    from rest_framework.authtoken.models import Token
-    token, _ = Token.objects.get_or_create(user=superuser)
-    return token.key
-
-
-@pytest.fixture
-def client_superuser(token_superuser):
-    from rest_framework.test import APIClient
-
-    client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Token {token_superuser}')
-    return client
-
-
-@pytest.fixture
-def token_admin(admin):
-    from rest_framework.authtoken.models import Token
+def client_admin(admin):
     token, _ = Token.objects.get_or_create(user=admin)
-    return token.key
-
-
-@pytest.fixture
-def client_admin(token_admin):
-    from rest_framework.test import APIClient
 
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Token {token_admin}')
+    client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
     return client
 
 
 @pytest.fixture
-def token_user(user):
-    from rest_framework.authtoken.models import Token
-    token, _ = Token.objects.get_or_create(user=user)
-    return token.key
-
-
-@pytest.fixture
-def client_user(token_user):
-    from rest_framework.test import APIClient
+def client_user1(user1):
+    token, _ = Token.objects.get_or_create(user=user1)
 
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Token {token_user}')
+    client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
     return client
 
 
 @pytest.fixture
-def token_user2(user2):
-    from rest_framework.authtoken.models import Token
+def client_user2(user2):
     token, _ = Token.objects.get_or_create(user=user2)
-    return token.key
-
-
-@pytest.fixture
-def client_user2(token_user2):
-    from rest_framework.test import APIClient
 
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Token {token_user2}')
+    client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
     return client
-
-
-@pytest.fixture
-def client_guest(token_user):
-    from rest_framework.test import APIClient
-
-    return APIClient()
