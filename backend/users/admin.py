@@ -1,21 +1,10 @@
-from django.contrib import admin
+from django.contrib import admin, auth
 
 from users.models import User
 
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(auth.admin.UserAdmin):
     empty_value_display = '-empty-'
-
-    fieldsets = (
-        (None, {
-            'fields': ('username', 'email', 'last_name', 'first_name', 'password')
-        }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': ('role',),
-        }),
-    )
 
     list_display = (
         'pk',
@@ -27,12 +16,57 @@ class UserAdmin(admin.ModelAdmin):
         'is_active',
         'is_staff'
     )
+
     list_display_links = ('pk', 'username', 'email')
+
     list_editable = (
         'last_name',
         'first_name',
         'role'
     )
+
     list_filter = ('username', 'email', 'is_active', 'is_staff')
+
     search_fields = ('username', 'email', 'last_name', 'first_name')
 
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'email',
+                'username',
+                'first_name',
+                'last_name',
+                'password1',
+                'password2'
+            ),
+        }),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        if request.user.is_superuser:
+            return UserAdmin.fieldsets + (
+                ('Advanced options', {'fields': ('role', )}),
+            )
+
+        if request.user.is_staff and request.user.role == 'A':
+            return (
+                (None, {
+                    'fields': (
+                        'email',
+                        'username',
+                        'first_name',
+                        'last_name',
+                        'password'
+                    )
+                }),
+                ('Advanced options', {
+                    'classes': ('collapse',),
+                    'fields': ('role',),
+                }),
+            )
+
+        return super().get_fieldsets(request, obj)
+
+
+admin.site.register(User, UserAdmin)

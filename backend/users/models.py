@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 
@@ -12,14 +12,20 @@ class User(AbstractUser):
         'first name',
         max_length=150,
         blank=False,
-        null=False
+        null=False,
+        help_text=(
+            'Required. 150 characters or fewer. Letters only.'
+        )
     )
 
     last_name = models.CharField(
         'last name',
         max_length=150,
         blank=False,
-        null=False
+        null=False,
+        help_text=(
+            'Required. 150 characters or fewer. Letters only.'
+        )
     )
 
     email = models.EmailField(
@@ -27,7 +33,11 @@ class User(AbstractUser):
         max_length=254,
         blank=False,
         null=False,
-        unique=True
+        unique=True,
+        help_text=(
+            '''Required. 254 characters or fewer.
+            Letters, digits and @/./+/-/_ only.'''
+        ),
     )
 
     role = models.CharField(
@@ -35,6 +45,8 @@ class User(AbstractUser):
         choices=USER_ROLES,
         default='U'
     )
+
+    objects = UserManager()
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
