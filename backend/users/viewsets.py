@@ -54,12 +54,12 @@ class UsersViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['delete', 'post']) # TODO: Move subscription to other app?
+    @action(detail=True, methods=['delete', 'post'])  # TODO: Move subscription to other app?
     def subscribe(self, request, id=None):
         author = self.get_object()
         if request.user == author:
             return Response(
-                data={'errors': 'You can\'t do this with yourself'},
+                data={'errors': 'Нельзя это делать с самим собой'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -70,15 +70,17 @@ class UsersViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
             return Response(
-                data={'detail': 'Страница не найдена.'},
+                data={'detail': 'Подписка не найдена.'},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if request.method == 'POST':
             if subscription.exists():
                 return Response(
-                    data={'errors': 'This subscription already exists'},
+                    data={'errors': 'Подписка уже существует'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             Follow.objects.create(author=author, user=request.user)
             return Response(status=status.HTTP_201_CREATED)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
