@@ -1,8 +1,6 @@
 from django.contrib.auth.models import Group
 import pytest
 
-# from tests.common import User
-
 
 class TestUsersPermissions:
     @pytest.mark.django_db
