@@ -3,8 +3,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 
-from tests.common import User
-
 @pytest.fixture(scope='session')
 def password_1():
     return 'gv9zPWhb5Xr2pHq3'
@@ -28,8 +26,7 @@ def admin(django_user_model, password_1):
         password=password_1,
         first_name='Admin',
         last_name='User',
-        role='A',
-        is_staff=True
+        role=1
     )
 
 

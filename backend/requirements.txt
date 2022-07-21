@@ -8,8 +8,8 @@ pytest-django
 django-stubs
 djangorestframework-stubs
 flake8
-flake8-annotations
+#flake8-annotations
 flake8-broken-line
-flake8-docstrings
+#flake8-docstrings
 flake8-return
 flake8-isort
