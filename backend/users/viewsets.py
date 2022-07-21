@@ -54,7 +54,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['delete', 'post'])  # TODO: Move subscription to other app?
+    @action(detail=True, methods=['delete', 'post'])
     def subscribe(self, request, id=None):
         author = self.get_object()
         if request.user == author:
