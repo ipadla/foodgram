@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'api.apps.ApiConfig',
+    'tags.apps.TagsConfig',
     'users.apps.UsersConfig',
 ]
 
