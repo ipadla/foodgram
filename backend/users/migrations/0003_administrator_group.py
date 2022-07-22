@@ -19,7 +19,8 @@ def create_administrator_group(apps, schema_editor):
     ]
 
     administrators, _ = group.objects.get_or_create(name='Administrators')
-    administrators.permissions.set(administrators_permissions)
+    for perm in administrators_permissions:
+        administrators.permissions.add(perm)
 
 
 class Migration(migrations.Migration):
