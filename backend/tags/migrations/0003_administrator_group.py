@@ -12,12 +12,12 @@ def administrator_group_permissions(apps, schema_editor):
     delete_tags = permission.objects.get(codename='delete_tags')
     view_tags = permission.objects.get(codename='view_tags')
 
-    administrators_permissions = (
+    administrators_permissions = [
         add_tags,
         change_tags,
         delete_tags,
         view_tags
-    )
+    ]
 
     if group.objects.filter(name='Administrators').exists():
         administrators = group.objects.get(name='Administrators')
