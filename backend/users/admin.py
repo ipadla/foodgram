@@ -19,11 +19,11 @@ class UserAdmin(auth.admin.UserAdmin):
 
     list_display_links = ('pk', 'username', 'email')
 
-    list_editable = (
-        'last_name',
-        'first_name',
-        'role'
-    )
+    # list_editable = (
+    #     'last_name',
+    #     'first_name',
+    #     'role'
+    # )
 
     list_filter = ('username', 'email', 'is_active', 'is_staff')
 
@@ -49,21 +49,13 @@ class UserAdmin(auth.admin.UserAdmin):
                 ('Advanced options', {'fields': ('role', )}),
             )
 
-        if request.user.is_staff and request.user.role == 'A':
+        if request.user.is_staff and request.user.role == User.ADMIN:
             return (
                 (None, {
                     'fields': (
-                        'email',
-                        'username',
-                        'first_name',
-                        'last_name',
                         'password',
                         'is_active'
                     )
-                }),
-                ('Advanced options', {
-                    'classes': ('collapse',),
-                    'fields': ('role',),
                 }),
             )
 
