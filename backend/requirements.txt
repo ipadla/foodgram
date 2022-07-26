@@ -1,5 +1,9 @@
-Django<2.3,>=2.2
+#Django<2.3,>=2.2
+Django~=2.2
+Pillow
+django-filter
 djangorestframework
+drf-extra-fields
 djoser
 gunicorn
 psycopg2-binary
