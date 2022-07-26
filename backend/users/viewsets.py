@@ -59,7 +59,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         author = self.get_object()
         if request.user == author:
             return Response(
-                data={'errors': 'Нельзя это делать с самим собой'},
+                data={'errors': 'Нельзя это делать с самим собой.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -67,6 +67,7 @@ class UsersViewSet(viewsets.ModelViewSet):
             author=author,
             user=request.user
         )
+
         if request.method == 'DELETE':
             if subscription.exists():
                 subscription.delete()
@@ -80,7 +81,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':
             if subscription.exists():
                 return Response(
-                    data={'errors': 'Подписка уже существует'},
+                    data={'errors': 'Подписка уже существует.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             Subscription.objects.create(author=author, user=request.user)
