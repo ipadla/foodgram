@@ -8,3 +8,8 @@ class TagsSerializer(serializers.ModelSerializer):
         model = Tags
         fields = '__all__'
         read_only_fields = ('__all__',)
+
+    def to_internal_value(self, data):
+        if type(data) == int:
+            return data
+        return super().to_internal_value(data)

@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 
-class Tags(models.Model):
+class Tags(models.Model):  # TODO: Rename to Tag
     name = models.CharField(max_length=64, unique=True)
 
     color = models.CharField(
