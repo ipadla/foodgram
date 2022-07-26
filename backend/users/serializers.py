@@ -12,19 +12,26 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
+        fields = [
             'id',
             'email',
             'username',
             'first_name',
             'last_name',
             'is_subscribed'
-        )
+        ]
         read_only_fields = ('__all__',)
 
     def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+
+        if request is None or request.user.is_anonymous:
+            return False
+        else:
+            user = request.user
+
         return Subscription.objects.filter(
-            user=self.context['request'].user,
+            user=user,
             author=obj
         ).exists()
 
@@ -34,7 +41,11 @@ class UserPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(max_length=150, required=True)
 
     def validate_current_password(self, value):
-        user = self.context['request'].user
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            raise serializers.ValidationError('You are not authenticated')
+
+        user = request.user
 
         if not user.check_password(value):
             raise serializers.ValidationError('Wrong current_password')
@@ -47,7 +58,11 @@ class UserPasswordSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            raise serializers.ValidationError('You are not authenticated')
+
+        user = request.user
         user.set_password(validated_data['new_password'])
         user.save()
 
