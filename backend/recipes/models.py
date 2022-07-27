@@ -15,7 +15,7 @@ class Ingredient(models.Model):
 
 
 def image_directory_path(instance, filename):
-    return 'recipe_image/{1}'.format(instance.pk, filename)
+    return f'recipe_image/{filename}'
 
 
 class Recipe(models.Model):

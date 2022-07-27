@@ -1,6 +1,6 @@
 from django.contrib import admin, auth
 
-from users.models import User, Subscription
+from users.models import Subscription, User
 
 
 class UserAdmin(auth.admin.UserAdmin):
@@ -64,8 +64,8 @@ class UserAdmin(auth.admin.UserAdmin):
 
 admin.site.register(User, UserAdmin)
 
+
 @admin.register(Subscription)
 class SubscriptionsAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author')
     list_display_links = ('id',)
-

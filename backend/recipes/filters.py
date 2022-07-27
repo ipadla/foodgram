@@ -1,4 +1,5 @@
 from django_filters import filterset
+
 from recipes.models import Recipe
 
 
@@ -25,7 +26,7 @@ class RecipesFilter(filterset.FilterSet):
         if self.request.user.is_anonymous:
             return queryset.filter()
         if value is True:
-            user_favorites=self.request.user.favorite.all()
+            user_favorites = self.request.user.favorite.all()
             return queryset.filter(
                 id__in=user_favorites.values_list(
                     'recipe__id',

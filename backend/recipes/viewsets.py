@@ -9,8 +9,7 @@ from recipes.decorators import favorite_and_cart
 from recipes.filters import RecipesFilter
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
-from recipes.serializers import (IngredientSerializer,
-                                 RecipeSerializer,
+from recipes.serializers import (IngredientSerializer, RecipeSerializer,
                                  RecipeSubscriptionSerializer)
 from users.models import User
 
@@ -24,7 +23,6 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     # TODO: Pagination limit
-    # TODO: actions decorator
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = RecipesFilter
     lookup_field = 'id'
@@ -42,8 +40,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
         shopping_cart = request.user.shopping_cart.all()
         print(
             RecipeIngredients.objects.filter(
-                recipe__id__in=shopping_cart.values_list('recipe__id', flat=True)
-            ).values('ingredient__name', 'ingredient__measurement_unit').annotate(Sum('amount'))
+                recipe__id__in=shopping_cart.values_list(
+                    'recipe__id',
+                    flat=True
+                )
+            ).values(
+                'ingredient__name',
+                'ingredient__measurement_unit'
+            ).annotate(Sum('amount'))
         )
         return Response(status=status.HTTP_200_OK)
 
@@ -66,7 +70,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class SubscriptionViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
+class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = RecipeSubscriptionSerializer
 
     def get_queryset(self):
