@@ -26,14 +26,14 @@ def favorite_and_cart(model=None):
                     return Response(status=status.HTTP_204_NO_CONTENT)
 
                 return Response(
-                    data={'detail': 'Избранное не найдено.'},
+                    data={'detail': 'Объект не найден.'},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
             if request.method == 'POST':
                 if obj.exists():
                     return Response(
-                        data={'errors': 'Избранное уже существует.'},
+                        data={'errors': 'Объект уже существует.'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 model.objects.create(recipe=recipe, user=request.user)
