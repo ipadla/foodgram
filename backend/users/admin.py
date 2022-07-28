@@ -14,7 +14,8 @@ class UserAdmin(auth.admin.UserAdmin):
         'first_name',
         'role',
         'is_active',
-        'is_staff'
+        'is_staff',
+        'is_superuser'
     )
 
     list_display_links = ('pk', 'username', 'email')
@@ -25,7 +26,7 @@ class UserAdmin(auth.admin.UserAdmin):
     #     'role'
     # )
 
-    list_filter = ('username', 'email', 'is_active', 'is_staff')
+    list_filter = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')
 
     search_fields = ('username', 'email', 'last_name', 'first_name')
 
@@ -69,3 +70,4 @@ admin.site.register(User, UserAdmin)
 class SubscriptionsAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author')
     list_display_links = ('id',)
+    list_filter = ('user', 'author')
