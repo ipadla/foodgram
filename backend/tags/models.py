@@ -18,7 +18,10 @@ class Tags(models.Model):  # TODO: Rename to Tag
     slug = models.SlugField(unique=True)
 
     class Meta:
-        verbose_name_plural = "tags"
+        verbose_name_plural = 'tags'
+
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         if re.match('^#[A-Fa-f0-9]{6}$', self.color):
