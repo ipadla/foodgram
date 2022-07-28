@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.utils import model_meta
 
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
@@ -47,10 +48,10 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = RecipeIngredientsSerializer(many=True)
+    ingredients = RecipeIngredientsSerializer(many=True, required=True)
     author = UserSerializer(read_only=True)
     image = Base64ImageField()
-    tags = TagsSerializer(many=True)
+    tags = TagsSerializer(many=True, required=True, allow_null=False)
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
@@ -97,6 +98,77 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         return recipe
+
+    def update(self, instance, validated_data):
+        info = model_meta.get_field_info(instance)
+
+        ingredients = validated_data.pop('ingredients')
+
+        m2m_fields = []
+        for attr, value in validated_data.items():
+            if attr in info.relations and info.relations[attr].to_many:
+                m2m_fields.append((attr, value))
+            else:
+                setattr(instance, attr, value)
+
+        instance.save()
+
+        for attr, value in m2m_fields:
+            field = getattr(instance, attr)
+            field.set(value)
+
+        original_ingredients = list(
+            instance.ingredients.all().values_list(
+                'ingredient__id',
+                flat=True
+            )
+        )
+
+        for ingredient in ingredients:
+
+            amount = ingredient.get('amount')
+            ingredient_obj = ingredient.get('ingredient')
+
+            if ingredient_obj.id not in original_ingredients:
+                RecipeIngredients.objects.create(
+                    ingredient=ingredient_obj,
+                    recipe=instance,
+                    amount=amount
+                )
+            else:
+                RecipeIngredients.objects.filter(
+                    recipe=instance,
+                    ingredient=ingredient_obj
+                ).update(amount=amount)
+
+            try:
+                original_ingredients.remove(
+                    ingredient_obj.id
+                )
+            except ValueError:
+                pass
+
+        RecipeIngredients.objects.filter(
+            recipe=instance,
+            ingredient__id__in=original_ingredients
+        ).delete()
+
+        return instance
+
+    def validate(self, data):
+        tags = data.get('tags', None)
+        if tags is None or not tags:
+            raise serializers.ValidationError(
+                'Tags cant be empty.'
+            )
+
+        ingredients = data.get('ingredients', None)
+        if ingredients is None or not ingredients:
+            raise serializers.ValidationError(
+                'Ingredients cant be empty.'
+            )
+
+        return data
 
 
 class RecipeFavoriteShoppingSerializer(serializers.ModelSerializer):

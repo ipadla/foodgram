@@ -11,7 +11,11 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(max_length=16, null=False, blank=False)
 
     class Meta:
+        ordering = ['id']
         verbose_name_plural = "ingredients"
+
+    def __str__(self):
+        return self.name
 
 
 def image_directory_path(instance, filename):
@@ -25,10 +29,10 @@ class Recipe(models.Model):
         related_name='recipes'
     )
     name = models.CharField(max_length=128, null=False, blank=False)
-    text = models.TextField()
-    tags = models.ManyToManyField(Tags, blank=True)
-    image = models.ImageField(upload_to=image_directory_path)
-    cooking_time = models.PositiveSmallIntegerField()
+    text = models.TextField(null=False, blank=False)
+    tags = models.ManyToManyField(Tags, blank=False)
+    image = models.ImageField(upload_to=image_directory_path)  # FIXME: Absolute image URL
+    cooking_time = models.PositiveSmallIntegerField(blank=False, null=False)
     pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -47,8 +51,18 @@ class RecipeFavorites(models.Model):
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favorited'
     )
+
+    class Meta:
+        verbose_name_plural = 'recipe favorites'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_user_recipe'
+            )
+        ]
 
 
 class RecipeIngredients(models.Model):
@@ -61,7 +75,13 @@ class RecipeIngredients(models.Model):
     amount = models.PositiveSmallIntegerField()
 
     class Meta:
-        verbose_name_plural = "recipe ingredients"
+        verbose_name_plural = 'recipe ingredients'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'],
+                name='unique_ingredient_recipe'
+            )
+        ]
 
 
 class ShoppingCart(models.Model):
@@ -74,3 +94,11 @@ class ShoppingCart(models.Model):
         Recipe,
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_user_recipe'
+            )
+        ]

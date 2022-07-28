@@ -9,7 +9,7 @@ router = routers.DefaultRouter()
 router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
 router.register(r'recipes', RecipesViewSet, basename='recipes')
 router.register(
-    r'users/subscription',
+    r'users/subscriptions',
     SubscriptionViewSet,
     basename='subscription'
 )

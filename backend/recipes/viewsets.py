@@ -6,15 +6,20 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from recipes.decorators import favorite_and_cart
-from recipes.filters import RecipesFilter
+from recipes.filters import IngredientsFilter, RecipesFilter
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
+from recipes.pagination import RecipePagination
+from recipes.permissions import IsObjectAuthor
 from recipes.serializers import (IngredientSerializer, RecipeSerializer,
                                  RecipeSubscriptionSerializer)
 from users.models import User
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = IngredientsFilter
+    lookup_field = 'id'
     pagination_class = None
     permission_classes = (AllowAny,)
     serializer_class = IngredientSerializer
@@ -22,12 +27,23 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    # TODO: Pagination limit
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = RecipesFilter
     lookup_field = 'id'
+    pagination_class = RecipePagination
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
+
+    def get_permissions(self):
+        permissions = self.permission_classes
+
+        if self.action == 'create':
+            permissions = [IsAuthenticated]
+
+        if self.action in ['destroy', 'partial_update', 'update']:
+            permissions = [IsObjectAuthor]
+
+        return [permission() for permission in permissions]
 
     @action(
         detail=False,
@@ -71,6 +87,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    # TODO: /api/users/subscriptions/?page=1&limit=6&recipes_limit=3
+    pagination_class = RecipePagination
+    permission_classes = (IsAuthenticated,)
     serializer_class = RecipeSubscriptionSerializer
 
     def get_queryset(self):
