@@ -20,13 +20,13 @@ class UserAdmin(auth.admin.UserAdmin):
 
     list_display_links = ('pk', 'username', 'email')
 
-    # list_editable = (
-    #     'last_name',
-    #     'first_name',
-    #     'role'
-    # )
-
-    list_filter = ('username', 'email', 'is_active', 'is_staff', 'is_superuser')
+    list_filter = (
+        'username',
+        'email',
+        'is_active',
+        'is_staff',
+        'is_superuser'
+    )
 
     search_fields = ('username', 'email', 'last_name', 'first_name')
 
@@ -61,6 +61,12 @@ class UserAdmin(auth.admin.UserAdmin):
             )
 
         return super().get_fieldsets(request, obj)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(is_superuser=False)
 
 
 admin.site.register(User, UserAdmin)
