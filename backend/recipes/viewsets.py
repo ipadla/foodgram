@@ -87,7 +87,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    # TODO: /api/users/subscriptions/?page=1&limit=6&recipes_limit=3
     pagination_class = RecipePagination
     permission_classes = (IsAuthenticated,)
     serializer_class = RecipeSubscriptionSerializer

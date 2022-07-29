@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
     measurement_unit = models.CharField(max_length=16, null=False, blank=False)
 
     class Meta:
@@ -31,7 +31,7 @@ class Recipe(models.Model):
     name = models.CharField(max_length=128, null=False, blank=False)
     text = models.TextField(null=False, blank=False)
     tags = models.ManyToManyField(Tags, blank=False)
-    image = models.ImageField(upload_to=image_directory_path)  # FIXME: Absolute image URL
+    image = models.ImageField(upload_to=image_directory_path)
     cooking_time = models.PositiveSmallIntegerField(blank=False, null=False)
     pub_date = models.DateTimeField(auto_now_add=True)
 

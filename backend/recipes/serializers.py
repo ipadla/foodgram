@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -50,7 +51,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientsSerializer(many=True, required=True)
     author = UserSerializer(read_only=True)
-    image = Base64ImageField()
+    image = Base64ImageField(required=True)
     tags = TagsSerializer(many=True, required=True, allow_null=False)
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
@@ -78,6 +79,11 @@ class RecipeSerializer(serializers.ModelSerializer):
             user = request.user
 
         return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['image'] = instance.image.url
+        return rep
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -179,10 +185,26 @@ class RecipeFavoriteShoppingSerializer(serializers.ModelSerializer):
 
 
 class RecipeSubscriptionSerializer(UserSerializer):
-    recipes = RecipeFavoriteShoppingSerializer(many=True)
+    recipes = serializers.SerializerMethodField(read_only=True)
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + [
             'recipes'
         ]
         read_only_fields = ('__all__',)
+
+    def get_recipes(self, obj):
+        request = self.context.get('request', None)
+
+        if request is None:
+            return
+
+        recipes_limit = request.query_params.get(
+            'recipes_limit',
+            settings.RECIPES_LIMIT
+        )
+
+        recipes_list = obj.recipes.all()[:int(recipes_limit)]
+        serializer = RecipeFavoriteShoppingSerializer(recipes_list, many=True)
+
+        return serializer.data

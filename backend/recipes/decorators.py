@@ -29,8 +29,7 @@ def favorite_and_cart(model=None):
                     data={'detail': 'Объект не найден.'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-
-            if request.method == 'POST':
+            elif request.method == 'POST':
                 if obj.exists():
                     return Response(
                         data={'errors': 'Объект уже существует.'},

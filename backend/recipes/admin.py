@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Count
 
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
