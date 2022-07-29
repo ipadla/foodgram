@@ -137,3 +137,7 @@ dmypy.json
 
 # Pyrightconfig
 pyrightconfig.json
+
+# Django static/ and media/ folders
+backend/media/
+backend/static/
