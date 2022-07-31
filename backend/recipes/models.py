@@ -42,6 +42,11 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    def delete(self, *args, **kwargs):
+        storage, path = self.image.storage, self.image.path
+        super(Recipe, self).delete(*args, **kwargs)
+        storage.delete(path)
+
 
 class RecipeFavorites(models.Model):
     user = models.ForeignKey(
