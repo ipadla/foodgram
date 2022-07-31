@@ -197,7 +197,7 @@ class RecipeSubscriptionSerializer(UserSerializer):
         request = self.context.get('request', None)
 
         if request is None:
-            return
+            return {}
 
         recipes_limit = request.query_params.get(
             'recipes_limit',

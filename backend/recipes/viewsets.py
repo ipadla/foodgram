@@ -1,3 +1,5 @@
+from io import BytesIO, StringIO
+
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
@@ -10,7 +12,9 @@ from recipes.filters import IngredientsFilter, RecipesFilter
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
 from recipes.pagination import RecipePagination
+from recipes.pdfcart import PdfCart
 from recipes.permissions import IsObjectAuthor
+from recipes.renderers import PdfRenderer, PlainTextRenderer
 from recipes.serializers import (IngredientSerializer, RecipeSerializer,
                                  RecipeSubscriptionSerializer)
 from users.models import User
@@ -48,24 +52,65 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=['get'],
-        permission_classes=[IsAuthenticated]
+        permission_classes=[IsAuthenticated],
+        renderer_classes=[PlainTextRenderer, PdfRenderer]
     )
     def download_shopping_cart(self, request):
-        # TODO: download shopping_cart
-        # TODO: prettify shopping_cart
         shopping_cart = request.user.shopping_cart.all()
-        print(
-            RecipeIngredients.objects.filter(
-                recipe__id__in=shopping_cart.values_list(
-                    'recipe__id',
-                    flat=True
-                )
-            ).values(
-                'ingredient__name',
-                'ingredient__measurement_unit'
-            ).annotate(Sum('amount'))
+
+        recipes = Recipe.objects.filter(
+            id__in=shopping_cart.values_list(
+                'recipe__id',
+                flat=True
+            )
         )
-        return Response(status=status.HTTP_200_OK)
+
+        recipes_ingredients = RecipeIngredients.objects.filter(
+            recipe__in=recipes
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(Sum('amount'))
+
+        if request.accepted_renderer.format == 'pdf':
+            buffer = BytesIO()
+            report = PdfCart(buffer)
+            pdf = report.print_cart(
+                ingredients=recipes_ingredients,
+                recipes=recipes
+            )
+
+            return Response(
+                data=pdf,
+                content_type='application/pdf',
+                headers={
+                    'Content-Disposition': 'attachment; filename="Cart.pdf"'
+                },
+                status=status.HTTP_200_OK
+            )
+
+        buffer = StringIO()
+        buffer.write('Список покупок.\n\n')
+        buffer.write('Выбранные рецепты:\n')
+
+        for recipe in recipes:
+            buffer.write(f'\t - {recipe.name}\n')
+        buffer.write('\nНеобходимые ингредиенты:\n')
+
+        for ingredient in recipes_ingredients:
+            buffer.write(f'\t - {ingredient["ingredient__name"]}')
+            buffer.write(f': {ingredient["amount__sum"]}')
+            buffer.write(f' {ingredient["ingredient__measurement_unit"]}')
+            buffer.write('\n')
+
+        return Response(
+            data=buffer.getvalue(),
+            content_type='text/plain,charset=utf8',
+            headers={
+                'Content-Disposition': 'attachment; filename="Cart.txt"'
+            },
+            status=status.HTTP_200_OK
+        )
 
     @action(
         detail=True,

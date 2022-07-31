@@ -5,6 +5,8 @@ django-filter
 djangorestframework
 drf-extra-fields
 djoser
+reportlab
+reportlab-stubs
 gunicorn
 psycopg2-binary
 python-dotenv

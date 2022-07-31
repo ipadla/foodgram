@@ -9,6 +9,7 @@ class IngredientsFilter(filterset.FilterSet):
     def name_filter(self, queryset, name, value):
         return Ingredient.objects.filter(name__icontains=value)
 
+
 class RecipesFilter(filterset.FilterSet):
     is_favorited = filterset.CharFilter(
         label='is_favorited',
