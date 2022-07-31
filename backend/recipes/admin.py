@@ -8,13 +8,15 @@ from recipes.models import (Ingredient, Recipe, RecipeFavorites,
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     list_display_links = ('id', 'name')
+    list_filter = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(Recipe)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', 'favorited')
     list_display_links = ('id', 'name')
-    list_filter = ('name', 'tags')
+    list_filter = ('author', 'name', 'tags')
     search_fields = ('name', 'text')
 
     def favorited(self, obj):
