@@ -94,11 +94,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
         buffer.write('Выбранные рецепты:\n')
 
         for recipe in recipes:
-            buffer.write(f'\t - {recipe.name}\n')
+            buffer.write(f'  - {recipe.name}\n')
         buffer.write('\nНеобходимые ингредиенты:\n')
 
         for ingredient in recipes_ingredients:
-            buffer.write(f'\t - {ingredient["ingredient__name"]}')
+            buffer.write(f'  - {ingredient["ingredient__name"]}')
             buffer.write(f': {ingredient["amount__sum"]}')
             buffer.write(f' {ingredient["ingredient__measurement_unit"]}')
             buffer.write('\n')
