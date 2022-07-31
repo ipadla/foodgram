@@ -11,7 +11,7 @@ styles['Heading1'].fontName = 'Terminus'
 styles['Heading2'].fontName = 'Terminus'
 
 registerFont(
-    TTFont('Terminus', f'{settings.STATIC_ROOT}/fonts/Terminus.ttf', 'UTF-8')
+    TTFont('Terminus', f'{settings.BASE_DIR}/data/Terminus.ttf', 'UTF-8')
 )
 
 
