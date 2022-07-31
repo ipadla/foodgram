@@ -12,9 +12,8 @@ from recipes.filters import IngredientsFilter, RecipesFilter
 from recipes.models import (Ingredient, Recipe, RecipeFavorites,
                             RecipeIngredients, ShoppingCart)
 from recipes.pagination import RecipePagination
-from recipes.pdfcart import PdfCart
 from recipes.permissions import IsObjectAuthor
-from recipes.renderers import PdfRenderer, PlainTextRenderer
+from recipes.renderers import PdfCartRenderer, TextCartRenderer
 from recipes.serializers import (IngredientSerializer, RecipeSerializer,
                                  RecipeSubscriptionSerializer)
 from users.models import User
@@ -53,7 +52,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=['get'],
         permission_classes=[IsAuthenticated],
-        renderer_classes=[PlainTextRenderer, PdfRenderer]
+        renderer_classes=[TextCartRenderer, PdfCartRenderer]
     )
     def download_shopping_cart(self, request):
         shopping_cart = request.user.shopping_cart.all()
@@ -73,38 +72,22 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ).annotate(Sum('amount'))
 
         if request.accepted_renderer.format == 'pdf':
-            buffer = BytesIO()
-            report = PdfCart(buffer)
-            pdf = report.print_cart(
-                ingredients=recipes_ingredients,
-                recipes=recipes
-            )
-
             return Response(
-                data=pdf,
+                data={
+                    'recipes': recipes,
+                    'recipes_ingredients': recipes_ingredients
+                },
                 content_type='application/pdf',
                 headers={
                     'Content-Disposition': 'attachment; filename="Cart.pdf"'
-                },
-                status=status.HTTP_200_OK
+                }
             )
 
-        buffer = StringIO()
-        buffer.write('Список покупок.\n\n')
-        buffer.write('Выбранные рецепты:\n')
-
-        for recipe in recipes:
-            buffer.write(f'  - {recipe.name}\n')
-        buffer.write('\nНеобходимые ингредиенты:\n')
-
-        for ingredient in recipes_ingredients:
-            buffer.write(f'  - {ingredient["ingredient__name"]}')
-            buffer.write(f': {ingredient["amount__sum"]}')
-            buffer.write(f' {ingredient["ingredient__measurement_unit"]}')
-            buffer.write('\n')
-
         return Response(
-            data=buffer.getvalue(),
+            data={
+                'recipes': recipes,
+                'recipes_ingredients': recipes_ingredients
+            },
             content_type='text/plain,charset=utf8',
             headers={
                 'Content-Disposition': 'attachment; filename="Cart.txt"'
