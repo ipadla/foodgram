@@ -8,7 +8,7 @@
 
 Докуменация к API [http://foodgram.ipadla.org/api/docs/](http://foodgram.ipadla.org/api/docs/)
 
-Созданы пользователи
+Созданы пользователи:
 
 | login | email           | password  |
 | ----- | --------------- | --------- |
@@ -120,5 +120,3 @@ podman-compose exec backendpython manage.py createsuperuser
 podman-compose exec backend python manage.py loaddata \
 /app/data/fixtures.json
 ```
-
-
