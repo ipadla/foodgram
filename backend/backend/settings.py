@@ -3,9 +3,11 @@ import os
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
-load_dotenv()
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+dotenv_file = f'{BASE_DIR}/../infra/.env'
+if os.path.exists(dotenv_file):
+    load_dotenv(dotenv_path=dotenv_file)
 
 SECRET_KEY = os.getenv('SECRET_KEY', default=get_random_secret_key())
 DEBUG = os.getenv('DEBUG', default=False)
@@ -61,8 +63,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
 
