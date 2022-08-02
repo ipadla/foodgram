@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='shoppingcart',
-            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_user_recipe'),
+            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_cart_user_recipe'),
         ),
         migrations.AddConstraint(
             model_name='recipeingredients',
@@ -86,6 +86,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='recipefavorites',
-            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_user_recipe'),
+            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_fav_user_recipe'),
         ),
     ]
