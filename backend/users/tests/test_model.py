@@ -12,8 +12,8 @@ def search_field(fields, attname):
     return None
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersModel:
-    @pytest.mark.django_db
     def test_users_model_fields(self):
         expected_fields = {
             'role': fields.PositiveSmallIntegerField,
@@ -32,9 +32,7 @@ class TestUsersModel:
                 f'Field {key} should be {value} type.'
             )
 
-    @pytest.mark.django_db
     def test_users_model_create(self, password_1):
-        group = Group.objects.get(name='Administrators')
         user, _ = User.objects.get_or_create(
             username='TestUser1',
             email='user1@mail.fake',
@@ -42,6 +40,7 @@ class TestUsersModel:
             first_name='Common',
             last_name='User'
         )
+        group = Group.objects.get(name='Administrators')
 
         assert user is not None
         assert group not in user.groups.all()

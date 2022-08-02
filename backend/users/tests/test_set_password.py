@@ -1,15 +1,14 @@
 import pytest
 
 
+@pytest.mark.django_db(transaction=True)
 class TestUsersAuth:
-    @pytest.mark.django_db(transaction=True)
     def test_user_set_password_unauthorized(self, client):
         url = '/api/users/set_password/'
 
         assert client.get(url).status_code == 401
         assert client.post(url).status_code == 401
 
-    @pytest.mark.django_db(transaction=True)
     def test_user_set_password(
         self,
         client,
