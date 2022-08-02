@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, Group, UserManager
+from django.contrib.auth.models import AbstractUser, Group, Permission, UserManager
 from django.db import models
 from django.dispatch import receiver
 
@@ -65,14 +65,20 @@ class User(AbstractUser):
 
 @receiver(models.signals.post_save, sender=User)
 def check_user_in_administrators_group(sender, instance, using, **kwargs):
-    if Group.objects.filter(name='Administrators').exists() is True:
-        group = Group.objects.get(name='Administrators')
+    group, created = Group.objects.get_or_create(name='Administrators')
 
-        if instance.role == User.ADMIN and group not in instance.groups.all():
-            group.user_set.add(instance)
+    if created is True:
+        for perm in ['ingredient', 'recipe', 'recipeingredients', 'tags', 'user']:
+            for action in ['add', 'change', 'delete', 'view']:
+                group.permissions.add(
+                    Permission.objects.get(codename=f'{action}_{perm}')
+                )
 
-        if instance.role != User.ADMIN and group in instance.groups.all():
-            group.user_set.remove(instance)
+    if instance.role == User.ADMIN and group not in instance.groups.all():
+        group.user_set.add(instance)
+
+    if instance.role != User.ADMIN and group in instance.groups.all():
+        group.user_set.remove(instance)
 
 
 class Subscription(models.Model):
