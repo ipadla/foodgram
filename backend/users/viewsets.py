@@ -56,6 +56,11 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['delete', 'post'])
     def subscribe(self, request, id=None):
+        """ Управление подписками пользователя.
+        Если пользователь пытается подписаться на себя - отругать.
+        DELETE: Если подписка существует - удалить
+        POST: Если подписка не существует - создаем, иначе - ругаемся.
+        """
         author = self.get_object()
         if request.user == author:
             return Response(

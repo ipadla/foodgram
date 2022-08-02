@@ -4,6 +4,13 @@ from users.models import Subscription, User
 
 
 class UserAdmin(auth.admin.UserAdmin):
+    ''' Административный интерфейс пользователей.
+
+    В зависимости от роли пользователя на редактирование выдаёт только
+    определенные поля.
+
+    Редактирование суперпользователя возможно только суперпользователем.
+    '''
     empty_value_display = '-empty-'
 
     list_display = (

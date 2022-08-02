@@ -55,6 +55,12 @@ class User(AbstractUser):
         ordering = ('-date_joined',)
 
     def save(self, *args, **kwargs):
+        ''' Проверка роли пользователя.
+
+        Если пользователь ADMIN - у него должен быть флаг is_staff для доступа
+        в административный интерфейс.
+        Если пользователь USER - такого флага быть не должно
+        '''
         if self.role == User.ADMIN:
             self.is_staff = True
         elif self.is_superuser is False and self.role != User.ADMIN:
@@ -65,10 +71,23 @@ class User(AbstractUser):
 
 @receiver(models.signals.post_save, sender=User)
 def check_user_in_administrators_group(sender, instance, using, **kwargs):
+    ''' Проверка роли пользователя и группы.
+
+    После сохранения пользователя проверяет соответствует ли user.role его
+    группе.
+
+    Если группа Administrators не существует - создает её и назначает нужные
+    права.
+
+    Пользователь с ролью ADMIN попадает в группу
+    Пользователь с ролью USER выкидывается из группы
+    '''
     group, created = Group.objects.get_or_create(name='Administrators')
 
     if created is True:
-        for perm in ['ingredient', 'recipe', 'recipeingredients', 'tags', 'user']:
+        for perm in [
+            'ingredient', 'recipe', 'recipeingredients', 'tags', 'user'
+        ]:
             for action in ['add', 'change', 'delete', 'view']:
                 group.permissions.add(
                     Permission.objects.get(codename=f'{action}_{perm}')

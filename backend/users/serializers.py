@@ -8,6 +8,11 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    ''' Сериализатор пользователя, только для чтения.
+    Выдаёт основные поля.
+    is_subscribed - метод сериализатора, возвращает существование записи в
+    модели Subscription
+    '''
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -37,6 +42,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserPasswordSerializer(serializers.Serializer):
+    ''' Сериализатор смены пароля пользователя.
+    Проверяет валидность пароля current_password
+    Проверяет сложность пароля по Django'вски
+    '''
     current_password = serializers.CharField(max_length=150, required=True)
     new_password = serializers.CharField(max_length=150, required=True)
 
@@ -70,6 +79,13 @@ class UserPasswordSerializer(serializers.Serializer):
 
 
 class UserSignupSerializer(serializers.ModelSerializer):
+    ''' Регистрация пользователя.
+    Все поля обязательны.
+    username <-> email должно быть уникальным
+    username не может быть me
+    Проверяется существование записей с таки email или username
+    Проверяется сложность пароля
+    '''
 
     email = serializers.EmailField(
         max_length=256,
