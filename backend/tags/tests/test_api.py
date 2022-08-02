@@ -12,8 +12,8 @@ class TestTagsModel:
 
         response = client.get('/api/tags/')
         assert response.status_code == 200
-        # TODO: Check response length
+        assert len(response.json()) == 3
 
         response = client.get('/api/tags/0/')
         assert response.status_code == 200
-        # TODO: Check response dict
+        assert ['id', 'name', 'color', 'slug'] == list(response.json().keys())

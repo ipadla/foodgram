@@ -24,6 +24,8 @@ class Tags(models.Model):  # TODO: Rename to Tag
         return self.name
 
     def save(self, *args, **kwargs):
+        # Если не указан символ диез - добавляем его
+        # Всю строку переводим в прописные буквы
         if re.match('^#[A-Fa-f0-9]{6}$', self.color):
             self.color = self.color.lower()
         else:

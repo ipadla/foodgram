@@ -10,6 +10,7 @@ class TagsSerializer(serializers.ModelSerializer):
         read_only_fields = ('__all__',)
 
     def to_internal_value(self, data):
+        # Без этого не срабатывает сериализатор из рецептов.
         if type(data) == int:
             return data
         return super().to_internal_value(data)

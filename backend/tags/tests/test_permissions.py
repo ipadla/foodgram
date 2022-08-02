@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 
 
 class TestTagsPermissions:
-    @pytest.mark.django_db
+    @pytest.mark.django_db(transaction=True)
     def test_administrators_group_permissions(self, admin):
         group = Group.objects.get(name='Administrators')
         assert group is not None
