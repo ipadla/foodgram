@@ -11,7 +11,7 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(max_length=16, null=False, blank=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-name']
         verbose_name_plural = "ingredients"
 
     def __str__(self):
@@ -65,7 +65,7 @@ class RecipeFavorites(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_user_recipe'
+                name='unique_fav_user_recipe'
             )
         ]
 
@@ -104,6 +104,6 @@ class ShoppingCart(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='unique_user_recipe'
+                name='unique_cart_user_recipe'
             )
         ]
