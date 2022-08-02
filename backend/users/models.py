@@ -1,4 +1,5 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission, UserManager
+from django.contrib.auth.models import (AbstractUser, Group, Permission,
+                                        UserManager)
 from django.db import models
 from django.dispatch import receiver
 
