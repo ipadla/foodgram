@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Importing ingredients'))
-        path = f'{settings.STATIC_ROOT}/data/ingredients.csv'
+        path = f'{settings.BASE_DIR}/data/ingredients.csv'
 
         with open(path) as f:
             ingredients = reader(f)
