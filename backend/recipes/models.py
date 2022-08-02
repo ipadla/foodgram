@@ -43,6 +43,7 @@ class Recipe(models.Model):
         return self.name
 
     def delete(self, *args, **kwargs):
+        # Удаляем картинку при удалении рецепта
         storage, path = self.image.storage, self.image.path
         super(Recipe, self).delete(*args, **kwargs)
         storage.delete(path)

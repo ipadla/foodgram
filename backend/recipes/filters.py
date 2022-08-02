@@ -35,7 +35,6 @@ class RecipesFilter(filterset.FilterSet):
             return queryset.filter()
 
         if value == '1':
-            # TODO: select_related/prefetch_related?
             favorites = self.request.user.favorite.all()
             return queryset.filter(
                 id__in=favorites.values_list('recipe__id')
@@ -44,11 +43,11 @@ class RecipesFilter(filterset.FilterSet):
         return queryset.filter()
 
     def recipe_in_shopping_cart(self, queryset, name, value):
+        # В корзине ли рецепт? ?is_in_shopping_cart=[0,1]
         if self.request.user.is_anonymous is True:
             return queryset.filter()
 
         if value == '1':
-            # TODO: select_related/prefetch_related?
             shopping_cart = self.request.user.shopping_cart.all()
             return queryset.filter(
                 id__in=shopping_cart.values_list('recipe__id')

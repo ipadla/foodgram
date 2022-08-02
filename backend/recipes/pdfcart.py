@@ -23,6 +23,7 @@ class PdfCart:
 
     @staticmethod
     def _footer(canvas, doc):
+        # Футер на все страницы
         canvas.saveState()
 
         footer = Paragraph(
@@ -36,6 +37,7 @@ class PdfCart:
         canvas.restoreState()
 
     def print_cart(self, recipes, ingredients):
+        # Пишем список покупок в буфер.
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
                                 rightMargin=72,

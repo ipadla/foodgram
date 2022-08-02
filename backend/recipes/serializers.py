@@ -28,6 +28,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'recipe',)
 
     def to_internal_value(self, data):
+        # Получаем ингредиент по id, добавляем запись в таблицу.
         ingredient_id = data.get('id')
         internal_data = super().to_internal_value(data)
 
@@ -41,6 +42,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         return internal_data
 
     def to_representation(self, instance):
+        # Делаем вывод 'плоским'
         rep = super().to_representation(instance)
         ingredient_rep = rep.pop('ingredient')
         for key in ingredient_rep:
@@ -61,6 +63,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_is_favorited(self, obj):
+        # Есть ли рецепт в избранном?
         request = self.context.get('request')
 
         if request is None or request.user.is_anonymous:
@@ -71,6 +74,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return RecipeFavorites.objects.filter(user=user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
+        # Есть ли рецепт в списке покупок?
         request = self.context.get('request')
 
         if request is None or request.user.is_anonymous:
@@ -81,6 +85,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
 
     def to_representation(self, instance):
+        # Иначе получаем абсолютный url
         rep = super().to_representation(instance)
         rep['image'] = instance.image.url
         return rep
@@ -106,6 +111,16 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        ''' Обновление записи.
+
+        Тэги переписываются так, чтобы была возможность добавлять еще м2м поля.
+
+        Игредиенты:
+        Сначала создаётся список оригинальных ингредиентов.
+        Изменяются/добавляются ингредиенты
+        Затем ингредиенты измененные удаляются из этого списка.
+        В конце по списку оригинальных ингредиентов удаляются записи базы.
+        '''
         info = model_meta.get_field_info(instance)
 
         ingredients = validated_data.pop('ingredients')
@@ -162,6 +177,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
+        # Тэги и ингредиенты не могут быть пусты.
         tags = data.get('tags', None)
         if tags is None or not tags:
             raise serializers.ValidationError(
@@ -194,6 +210,8 @@ class RecipeSubscriptionSerializer(UserSerializer):
         read_only_fields = ('__all__',)
 
     def get_recipes(self, obj):
+        # Если в запросе есть recipes_limit - ограничиваем количество рецептов,
+        # иначе использует настройку RECIPES_LIMIT (по умолчанию 3)
         request = self.context.get('request', None)
 
         if request is None:

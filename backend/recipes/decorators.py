@@ -7,6 +7,14 @@ from recipes.serializers import RecipeFavoriteShoppingSerializer
 
 
 def favorite_and_cart(model=None):
+    ''' Декоратор избранного и корзины покупок.
+
+    Используется для добаления и удаления при DELETE и POST запросе.
+    Удаляет только существующее, добавляет только несуществующее.
+
+    В качестве параметра необходимо указать целевую модель модель
+    Например: @favorite_and_cart(model=RecipeFavorites)
+    '''
     def decorator(func):
         @wraps(func)
         def wrapper(self, request, id=None):

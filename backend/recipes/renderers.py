@@ -7,6 +7,11 @@ from recipes.pdfcart import PdfCart
 
 
 class PdfCartRenderer(renderers.BaseRenderer):
+    ''' Рендерим pdf.
+
+    Через буфер, чтобы небыло лишних файлов.
+    Реализация в pdfcart.py через reportlab
+    '''
     media_type = 'application/pdf'
     charset = None
     format = 'pdf'
@@ -22,6 +27,10 @@ class PdfCartRenderer(renderers.BaseRenderer):
 
 
 class TextCartRenderer(renderers.BaseRenderer):
+    ''' Рендерим txt.
+
+    Используя буфер, дабы не плодить файлы на диске.
+    '''
     media_type = 'application/txt'
     charset = 'utf-8'
     format = 'txt'

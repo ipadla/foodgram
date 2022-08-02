@@ -89,8 +89,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             content_type='text/plain,charset=utf8',
             headers={
                 'Content-Disposition': 'attachment; filename="Cart.txt"'
-            },
-            status=status.HTTP_200_OK
+            }
         )
 
     @action(
