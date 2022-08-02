@@ -53,6 +53,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
         renderer_classes=[TextCartRenderer, PdfCartRenderer]
     )
     def download_shopping_cart(self, request):
+        ''' Скачивание корзины покупок.
+
+        В зависимости от заголовка Accepted использует разные рендеры.
+        '''
         shopping_cart = request.user.shopping_cart.all()
 
         recipes = Recipe.objects.filter(
