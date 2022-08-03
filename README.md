@@ -28,12 +28,30 @@
 * gunicorn
 * [Django Rest Framework](https://www.django-rest-framework.org/)
 * [Djoser](https://djoser.readthedocs.io/)
+* [Reportlab](https://docs.reportlab.com/reportlab/userguide/ch1_intro/)
 * [Pytest](https://docs.pytest.org/), [pytest-django](https://pytest-django.readthedocs.io/)
 
 #### Описание приложений и api
 
 * [Api](./docs/Backend-api.md)
+* [Recipes](./docs/Backend-recipes.md)
+* [Tags](./docs/Backend-tags.md)
 * [Users](./docs/Backend-users.md)
+
+#### Тесты
+
+Проект содержит тесты (как удивительно)
+И проходит проверку flake8
+
+```bash
+cd ./backend
+python3.8 -m venv --prompt='foodgram' venv
+pip install -U pip
+pip install -Ur requirements.txt
+source ./venv/bin/activate
+pytest
+flake8
+```
 
 #### Запуск проекта
 
