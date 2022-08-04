@@ -1,5 +1,4 @@
-#Django<2.3,>=2.2
-Django~=2.2
+Django<2.3,>=2.2
 Pillow
 django-filter
 djangorestframework
@@ -15,9 +14,8 @@ pytest-cov
 pytest-django
 django-stubs
 djangorestframework-stubs
+pep8-naming
 flake8
-#flake8-annotations
 flake8-broken-line
-#flake8-docstrings
 flake8-return
 flake8-isort
