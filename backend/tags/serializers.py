@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tags.models import Tags
+from .models import Tags
 
 
 class TagsSerializer(serializers.ModelSerializer):

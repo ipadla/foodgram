@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
 from tags.models import Tags
 
 User = get_user_model()

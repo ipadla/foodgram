@@ -5,10 +5,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import Subscription
-from users.permissions import IsNotAuthenticated
-from users.serializers import (UserPasswordSerializer, UserSerializer,
-                               UserSignupSerializer)
+from .models import Subscription
+from .permissions import IsNotAuthenticated
+from .serializers import (UserPasswordSerializer, UserSerializer,
+                          UserSignupSerializer)
 
 User = get_user_model()
 

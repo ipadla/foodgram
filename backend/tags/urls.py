@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from tags.viewsets import TagsViewSet
+from .viewsets import TagsViewSet
 
 app_name = 'tags'
 

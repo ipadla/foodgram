@@ -4,17 +4,17 @@ from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
-from recipes.decorators import favorite_and_cart
-from recipes.filters import IngredientsFilter, RecipesFilter
-from recipes.models import (Ingredient, Recipe, RecipeFavorites,
-                            RecipeIngredients, ShoppingCart)
-from recipes.pagination import RecipePagination
-from recipes.permissions import IsObjectAuthor
-from recipes.renderers import PdfCartRenderer, TextCartRenderer
-from recipes.serializers import (IngredientSerializer, RecipeSerializer,
-                                 RecipeSubscriptionSerializer)
 from users.models import User
+
+from .decorators import favorite_and_cart
+from .filters import IngredientsFilter, RecipesFilter
+from .models import (Ingredient, Recipe, RecipeFavorites, RecipeIngredients,
+                     ShoppingCart)
+from .pagination import RecipePagination
+from .permissions import IsObjectAuthor
+from .renderers import PdfCartRenderer, TextCartRenderer
+from .serializers import (IngredientSerializer, RecipeSerializer,
+                          RecipeSubscriptionSerializer)
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):

@@ -3,7 +3,7 @@ from io import BytesIO, StringIO
 from django.utils.encoding import smart_text
 from rest_framework import renderers
 
-from recipes.pdfcart import PdfCart
+from .pdfcart import PdfCart
 
 
 class PdfCartRenderer(renderers.BaseRenderer):

@@ -3,7 +3,7 @@ from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
 
-from recipes.serializers import RecipeFavoriteShoppingSerializer
+from .serializers import RecipeFavoriteShoppingSerializer
 
 
 def favorite_and_cart(model=None):

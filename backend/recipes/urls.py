@@ -1,7 +1,6 @@
 from rest_framework import routers
 
-from recipes.viewsets import (IngredientsViewSet, RecipesViewSet,
-                              SubscriptionViewSet)
+from .viewsets import (IngredientsViewSet, RecipesViewSet, SubscriptionViewSet)
 
 app_name = 'recipes'
 
