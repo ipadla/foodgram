@@ -3,11 +3,11 @@ from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.utils import model_meta
-
-from recipes.models import (Ingredient, Recipe, RecipeFavorites,
-                            RecipeIngredients, ShoppingCart)
 from tags.serializers import TagsSerializer
 from users.serializers import UserSerializer
+
+from .models import (Ingredient, Recipe, RecipeFavorites, RecipeIngredients,
+                     ShoppingCart)
 
 User = get_user_model()
 
