@@ -18,6 +18,8 @@
 
 ## Backend
 
+![CI YamDB workflow](https://github.com/ipadla/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+
 В рамках дипломного проекта реализован.
 
 #### Технологии
