@@ -225,7 +225,6 @@ class RecipeSubscriptionSerializer(UserSerializer):
             settings.RECIPES_LIMIT
         )
 
-        print(Recipe.objects.filter(author=obj))
         recipes_list = obj.recipes.all()[:int(recipes_limit)]
         serializer = RecipeFavoriteShoppingSerializer(recipes_list, many=True)
 

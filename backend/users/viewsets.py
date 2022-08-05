@@ -97,7 +97,7 @@ class UsersViewSet(viewsets.ModelViewSet):
                 author,
                 context={'request': request}
             )
-            print(serializer.data)
+
             return Response(
                 data=serializer.data,
                 status=status.HTTP_201_CREATED
