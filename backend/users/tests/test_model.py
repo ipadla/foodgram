@@ -34,8 +34,8 @@ class TestUsersModel:
 
     def test_users_model_create(self, password_1):
         user, _ = User.objects.get_or_create(
-            username='TestUser1',
-            email='user1@mail.fake',
+            username='userTest1',
+            email='testuser1@mail.fake',
             password=password_1,
             first_name='Common',
             last_name='User'
