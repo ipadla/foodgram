@@ -51,7 +51,6 @@ class PdfCart:
         elements.append(Paragraph(u'Список покупок', styles['Heading1']))
         elements.append(Paragraph(u'Выбранные рецепты:', styles['Heading2']))
 
-
         if recipes is None or ingredients is None:
             doc.build(
                 elements,
