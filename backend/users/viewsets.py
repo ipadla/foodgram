@@ -23,7 +23,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         permissions = self.permission_classes
 
-        if self.action in ['create']:
+        if self.action == 'create':
             permissions = [IsNotAuthenticated]
             return [permission() for permission in permissions]
 
