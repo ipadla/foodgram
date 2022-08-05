@@ -85,7 +85,7 @@ DB_PORT=5432
 
 ```bash
 cd infra
-podman-compose -f ./docker-compose-dev.yml up
+docker-compose -f ./docker-compose-dev.yml up
 ```
 
 Далее запускается виртуальное окружение Python:
@@ -121,9 +121,9 @@ python manage.py runserver 0.0.0.0:8000
 
 ```bash
 cd ./backend
-podman-compose up --build
-podman-compose exec backend python manage.py collectstatic --no-input
-podman-compose exec backend python manage.py migrate
+docker-compose up --build
+docker-compose exec backend python manage.py collectstatic --no-input
+docker-compose exec backend python manage.py migrate
 ```
 
 Далее по желанию:
@@ -131,12 +131,12 @@ podman-compose exec backend python manage.py migrate
 Создание суперпользователя:
 
 ```bash
-podman-compose exec backend python manage.py createsuperuser
+docker-compose exec backend python manage.py createsuperuser
 ```
 
 Загрузка тестовых данных:
 
 ```bash
-podman-compose exec backend python manage.py loaddata \
+docker-compose exec backend python manage.py loaddata \
 /app/data/fixtures.json
 ```
