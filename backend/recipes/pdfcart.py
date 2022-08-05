@@ -38,6 +38,10 @@ class PdfCart:
 
     def print_cart(self, recipes, ingredients):
         # Пишем список покупок в буфер.
+
+        if recipes is None or ingredients is None:
+            return
+
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
                                 rightMargin=72,

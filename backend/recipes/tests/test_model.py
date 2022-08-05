@@ -16,8 +16,15 @@ class TestRecipesModel:
 
         assert Ingredient.objects.filter().count() == 10
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db(transaction=True)
     def test_recipe_creation(self, user1, tags):
+        tag = Tags.objects.create(
+            name=f'Tag',
+            color=f'#EE00E2',
+            slug=f'tag'
+        )
+
+        recipes_before = Recipe.objects.filter().count()
         for i in range(5):
             recipe = Recipe.objects.create(
                 author=user1,
@@ -26,10 +33,9 @@ class TestRecipesModel:
                 cooking_time=i
             )
 
-            recipe.tags.add(Tags.objects.get(id=1))
-            recipe.tags.add(Tags.objects.get(id=2))
+            recipe.tags.add(tag)
 
-        assert Recipe.objects.filter().count() == 5
+        assert Recipe.objects.filter().count() == recipes_before + 5
 
     @pytest.mark.django_db()
     def test_recipe_related_models(self, user1):

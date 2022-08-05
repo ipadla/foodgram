@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from users.models import User
@@ -51,14 +52,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
         detail=False,
         methods=['get'],
         permission_classes=[IsAuthenticated],
-        renderer_classes=[TextCartRenderer, PdfCartRenderer]
+        renderer_classes=[PdfCartRenderer, TextCartRenderer]
     )
     def download_shopping_cart(self, request):
         ''' Скачивание корзины покупок.
 
-        В зависимости от заголовка Accepted использует разные рендеры.
+        В зависимости от заголовка Accept использует разные рендеры.
         '''
+
         shopping_cart = request.user.shopping_cart.all()
+
+        if shopping_cart.count() == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         recipes = Recipe.objects.filter(
             id__in=shopping_cart.values_list(
@@ -74,27 +79,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'ingredient__measurement_unit'
         ).annotate(Sum('amount'))
 
-        if request.accepted_renderer.format == 'pdf':
-            return Response(
-                data={
-                    'recipes': recipes,
-                    'recipes_ingredients': recipes_ingredients
-                },
-                content_type='application/pdf',
-                headers={
-                    'Content-Disposition': 'attachment; filename="Cart.pdf"'
-                }
-            )
-
+        fmt = request.accepted_renderer.format
+        print(request.headers)
         return Response(
             data={
                 'recipes': recipes,
                 'recipes_ingredients': recipes_ingredients
             },
-            content_type='text/plain,charset=utf8',
+            content_type=f'application/{fmt}',
             headers={
-                'Content-Disposition': 'attachment; filename="Cart.txt"'
-            }
+                'Content-Disposition': f'attachment; filename="Cart.{fmt}"'
+            },
+            status=status.HTTP_200_OK
         )
 
     @action(

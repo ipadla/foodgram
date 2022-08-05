@@ -1,7 +1,8 @@
 from io import BytesIO, StringIO
 
 from django.utils.encoding import smart_text
-from rest_framework import renderers
+from rest_framework import renderers, status
+from rest_framework.exceptions import NotAuthenticated
 
 from .pdfcart import PdfCart
 
@@ -18,6 +19,12 @@ class PdfCartRenderer(renderers.BaseRenderer):
     render_style = 'binary'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        if renderer_context.get('request').user.is_authenticated is False:
+            return status.HTTP_401_UNAUTHORIZED
+
+        if data is None:
+            return status.HTTP_404_NOT_FOUND
+
         buffer = BytesIO()
         report = PdfCart(buffer)
         return report.print_cart(
@@ -36,6 +43,12 @@ class TextCartRenderer(renderers.BaseRenderer):
     format = 'txt'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        if renderer_context.get('request').user.is_authenticated is False:
+            return status.HTTP_401_UNAUTHORIZED
+
+        if data is None:
+            return status.HTTP_404_NOT_FOUND
+
         buffer = StringIO()
         buffer.write('Список покупок.\n\n')
         buffer.write('Выбранные рецепты:\n')

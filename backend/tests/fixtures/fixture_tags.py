@@ -12,5 +12,3 @@ def tags(django_db_blocker):
                 color=f'#EE00E{i}',
                 slug=f'tag_{i}'
             )
-
-        return Tags.objects.all()

@@ -11,5 +11,3 @@ def ingredients(django_db_blocker):
                 name=f'яйца иволги {i}',
                 measurement_unit='шт'
             )
-
-        return Ingredient.objects.all()
