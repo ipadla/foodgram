@@ -39,9 +39,6 @@ class PdfCart:
     def print_cart(self, recipes, ingredients):
         # Пишем список покупок в буфер.
 
-        if recipes is None or ingredients is None:
-            return
-
         buffer = self.buffer
         doc = SimpleDocTemplate(buffer,
                                 rightMargin=72,
@@ -53,6 +50,16 @@ class PdfCart:
         elements = []
         elements.append(Paragraph(u'Список покупок', styles['Heading1']))
         elements.append(Paragraph(u'Выбранные рецепты:', styles['Heading2']))
+
+
+        if recipes is None or ingredients is None:
+            doc.build(
+                elements,
+                onFirstPage=self._footer,
+                onLaterPages=self._footer
+            )
+
+            return buffer.getvalue()
 
         for recipe in recipes:
             elements.append(Paragraph(recipe.name, styles['Normal']))

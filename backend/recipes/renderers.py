@@ -2,7 +2,6 @@ from io import BytesIO, StringIO
 
 from django.utils.encoding import smart_text
 from rest_framework import renderers, status
-from rest_framework.exceptions import NotAuthenticated
 
 from .pdfcart import PdfCart
 
