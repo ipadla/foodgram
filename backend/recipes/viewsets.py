@@ -24,8 +24,8 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'id'
     pagination_class = None
     permission_classes = (AllowAny,)
-    serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -33,8 +33,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
     filterset_class = RecipesFilter
     lookup_field = 'id'
     pagination_class = RecipePagination
-    serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
 
     def get_permissions(self):
         permissions = self.permission_classes
@@ -79,7 +79,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ).annotate(Sum('amount'))
 
         fmt = request.accepted_renderer.format
-        print(request.headers)
+
         return Response(
             data={
                 'recipes': recipes,

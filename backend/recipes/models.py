@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.indexes import BrinIndex
 from django.db import models
 
 from tags.models import Tags
@@ -28,7 +29,12 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipes'
     )
-    name = models.CharField(max_length=128, null=False, blank=False)
+    name = models.CharField(
+        max_length=128,
+        null=False,
+        blank=False,
+        db_index=True
+    )
     text = models.TextField(null=False, blank=False)
     tags = models.ManyToManyField(Tags, blank=False)
     image = models.ImageField(upload_to=image_directory_path)
@@ -38,6 +44,9 @@ class Recipe(models.Model):
     class Meta:
         ordering = ['-pub_date']
         verbose_name_plural = "recipes"
+        indexes = (
+            BrinIndex(fields=['pub_date']),
+        )
 
     def __str__(self):
         return self.name

@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Tags(models.Model):  # TODO: Rename to Tag
-    name = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=64, unique=True, db_index=True)
 
     color = models.CharField(
         max_length=7,
@@ -15,7 +15,7 @@ class Tags(models.Model):  # TODO: Rename to Tag
         unique=True
     )
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, db_index=True)
 
     class Meta:
         verbose_name_plural = 'tags'
