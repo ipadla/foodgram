@@ -5,6 +5,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from recipes.serializers import RecipeSubscriptionSerializer
+
 from .models import Subscription
 from .permissions import IsNotAuthenticated
 from .serializers import (UserPasswordSerializer, UserSerializer,
@@ -89,7 +91,16 @@ class UsersViewSet(viewsets.ModelViewSet):
                     data={'errors': 'Подписка уже существует.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+
             Subscription.objects.create(author=author, user=request.user)
-            return Response(status=status.HTTP_201_CREATED)
+            serializer = RecipeSubscriptionSerializer(
+                author,
+                context={'request': request}
+            )
+            print(serializer.data)
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED
+            )
 
         return Response(status=status.HTTP_400_BAD_REQUEST)

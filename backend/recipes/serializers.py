@@ -203,10 +203,12 @@ class RecipeFavoriteShoppingSerializer(serializers.ModelSerializer):
 
 class RecipeSubscriptionSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField(read_only=True)
+    recipes_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + [
-            'recipes'
+            'recipes',
+            'recipes_count'
         ]
         read_only_fields = ('__all__',)
 
@@ -223,7 +225,11 @@ class RecipeSubscriptionSerializer(UserSerializer):
             settings.RECIPES_LIMIT
         )
 
+        print(Recipe.objects.filter(author=obj))
         recipes_list = obj.recipes.all()[:int(recipes_limit)]
         serializer = RecipeFavoriteShoppingSerializer(recipes_list, many=True)
 
         return serializer.data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
