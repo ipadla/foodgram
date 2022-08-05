@@ -131,7 +131,7 @@ podman-compose exec backend python manage.py migrate
 Создание суперпользователя:
 
 ```bash
-podman-compose exec backendpython manage.py createsuperuser
+podman-compose exec backend python manage.py createsuperuser
 ```
 
 Загрузка тестовых данных:
