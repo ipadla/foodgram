@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.indexes import BrinIndex
 from django.db import models
 
 from tags.models import Tags
@@ -44,9 +43,6 @@ class Recipe(models.Model):
     class Meta:
         ordering = ['-pub_date']
         verbose_name_plural = "recipes"
-        indexes = (
-            BrinIndex(fields=['pub_date']),
-        )
 
     def __str__(self):
         return self.name
