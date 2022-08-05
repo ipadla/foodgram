@@ -63,7 +63,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd
-            cd ~/dimploma/infra
+            cd ~/diploma/infra/
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose -f ./docker-compose.yml pull
