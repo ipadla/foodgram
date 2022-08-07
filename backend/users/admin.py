@@ -58,7 +58,7 @@ class UserAdmin(auth.admin.UserAdmin):
                 ('Advanced options', {'fields': ('role', )}),
             )
 
-        if request.user.is_staff and request.user.role == User.ADMIN:
+        if (request.user.is_staff and request.user.role == User.ADMIN and obj):
             return (
                 (None, {
                     'fields': (
