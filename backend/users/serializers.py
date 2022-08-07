@@ -9,6 +9,9 @@ class UserSerializer(serializers.ModelSerializer):
     Выдаёт основные поля.
     is_subscribed - метод сериализатора, возвращает существование записи в
     модели Subscription
+
+    Не используем кортеж в Meta.fields - этот сериализатор наследуется с
+    изменением полей использование кортежа - всё ломает.
     '''
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
