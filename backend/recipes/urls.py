@@ -5,10 +5,10 @@ from .viewsets import IngredientsViewSet, RecipesViewSet, SubscriptionViewSet
 app_name = 'recipes'
 
 router = routers.DefaultRouter()
-router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
-router.register(r'recipes', RecipesViewSet, basename='recipes')
+router.register('ingredients', IngredientsViewSet, basename='ingredients')
+router.register('recipes', RecipesViewSet, basename='recipes')
 router.register(
-    r'users/subscriptions',
+    'users/subscriptions',
     SubscriptionViewSet,
     basename='subscription'
 )

@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.utils import model_meta
@@ -9,8 +8,6 @@ from users.serializers import UserSerializer
 
 from .models import (Ingredient, Recipe, RecipeFavorites, RecipeIngredients,
                      ShoppingCart)
-
-User = get_user_model()
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -25,7 +22,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecipeIngredients
-        fields = ['ingredient', 'amount']
+        fields = ('ingredient', 'amount')
         read_only_fields = ('id', 'recipe',)
 
     def to_internal_value(self, data):
@@ -203,12 +200,10 @@ class RecipeFavoriteShoppingSerializer(serializers.ModelSerializer):
 
 class RecipeSubscriptionSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField(read_only=True)
-    recipes_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + [
-            'recipes',
-            'recipes_count'
+            'recipes'
         ]
         read_only_fields = ('__all__',)
 
@@ -229,6 +224,3 @@ class RecipeSubscriptionSerializer(UserSerializer):
         serializer = RecipeFavoriteShoppingSerializer(recipes_list, many=True)
 
         return serializer.data
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj).count()

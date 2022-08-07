@@ -1,9 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 
 from tags.models import Tags
-
-User = get_user_model()
+from users.models import User
 
 
 class Ingredient(models.Model):
@@ -11,7 +9,7 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(max_length=16, null=False, blank=False)
 
     class Meta:
-        ordering = ['-name']
+        ordering = ('-name',)
         verbose_name_plural = "ingredients"
 
     def __str__(self):
@@ -41,7 +39,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         verbose_name_plural = "recipes"
 
     def __str__(self):
@@ -70,7 +68,7 @@ class RecipeFavorites(models.Model):
         verbose_name_plural = 'recipe favorites'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 name='unique_fav_user_recipe'
             )
         ]
@@ -89,7 +87,7 @@ class RecipeIngredients(models.Model):
         verbose_name_plural = 'recipe ingredients'
         constraints = [
             models.UniqueConstraint(
-                fields=['ingredient', 'recipe'],
+                fields=('ingredient', 'recipe'),
                 name='unique_ingredient_recipe'
             )
         ]
@@ -109,7 +107,7 @@ class ShoppingCart(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 name='unique_cart_user_recipe'
             )
         ]

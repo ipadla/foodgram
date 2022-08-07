@@ -14,6 +14,8 @@ class User(AbstractUser):
         (USER, 'User'),
     )
 
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+
     first_name = models.CharField(
         'first name',
         max_length=150,
@@ -45,8 +47,6 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -62,10 +62,8 @@ class User(AbstractUser):
         в административный интерфейс.
         Если пользователь USER - такого флага быть не должно
         '''
-        if self.role == User.ADMIN:
-            self.is_staff = True
-        elif self.is_superuser is False and self.role != User.ADMIN:
-            self.is_staff = False
+
+        self.is_staff = self.role == User.ADMIN or self.is_superuser
 
         super().save(*args, **kwargs)
 
@@ -85,7 +83,7 @@ def check_user_in_administrators_group(sender, instance, using, **kwargs):
     '''
     group, created = Group.objects.get_or_create(name='Administrators')
 
-    if created is True:
+    if created:
         for perm in [
             'ingredient', 'recipe', 'recipeingredients', 'tags', 'user'
         ]:

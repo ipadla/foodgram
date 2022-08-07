@@ -3,6 +3,7 @@ from django.contrib import admin, auth
 from .models import Subscription, User
 
 
+@admin.register(User)
 class UserAdmin(auth.admin.UserAdmin):
     ''' Административный интерфейс пользователей.
 
@@ -74,9 +75,6 @@ class UserAdmin(auth.admin.UserAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(is_superuser=False)
-
-
-admin.site.register(User, UserAdmin)
 
 
 @admin.register(Subscription)

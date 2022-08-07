@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 
 from tags.models import Tags
@@ -11,9 +13,9 @@ class TestTagsModel:
         Tags.objects.create(name='Three', color='EE00E2', slug='tag_3')
 
         response = client.get('/api/tags/')
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert len(response.json()) == 3
 
         response = client.get('/api/tags/0/')
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert ['id', 'name', 'color', 'slug'] == list(response.json().keys())

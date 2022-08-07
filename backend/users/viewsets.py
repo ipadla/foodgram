@@ -1,24 +1,19 @@
-from django.contrib.auth import get_user_model
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.serializers import RecipeSubscriptionSerializer
-
-from .models import Subscription
+from .models import Subscription, User
 from .permissions import IsNotAuthenticated
 from .serializers import (UserPasswordSerializer, UserSerializer,
                           UserSignupSerializer)
-
-User = get_user_model()
 
 
 class UsersViewSet(viewsets.ModelViewSet):
     lookup_field = 'id'
     pagination_class = PageNumberPagination
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
@@ -91,16 +86,7 @@ class UsersViewSet(viewsets.ModelViewSet):
                     data={'errors': 'Подписка уже существует.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-
             Subscription.objects.create(author=author, user=request.user)
-            serializer = RecipeSubscriptionSerializer(
-                author,
-                context={'request': request}
-            )
-
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED
-            )
+            return Response(status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)

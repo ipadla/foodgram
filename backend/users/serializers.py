@@ -1,10 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import Subscription
-
-User = get_user_model()
+from .models import Subscription, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,8 +29,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         if request is None or request.user.is_anonymous:
             return False
-        else:
-            user = request.user
+
+        user = request.user
 
         return Subscription.objects.filter(
             user=user,
@@ -54,9 +51,7 @@ class UserPasswordSerializer(serializers.Serializer):
         if request is None or request.user.is_anonymous:
             raise serializers.ValidationError('You are not authenticated')
 
-        user = request.user
-
-        if not user.check_password(value):
+        if not request.user.check_password(value):
             raise serializers.ValidationError('Wrong current_password')
 
         return value
@@ -71,11 +66,10 @@ class UserPasswordSerializer(serializers.Serializer):
         if request is None or request.user.is_anonymous:
             raise serializers.ValidationError('You are not authenticated')
 
-        user = request.user
-        user.set_password(validated_data['new_password'])
-        user.save()
+        request.user.set_password(validated_data['new_password'])
+        request.user.save()
 
-        return user
+        return request.user
 
 
 class UserSignupSerializer(serializers.ModelSerializer):
